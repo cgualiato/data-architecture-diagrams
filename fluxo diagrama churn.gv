@@ -1,0 +1,163 @@
+digraph G {
+
+    rankdir=LR;
+
+    splines=true;
+
+    nodesep=0.8;
+
+    ranksep=1.5;
+
+
+
+    // Estilos para os nós (caixas)
+
+    node [shape=box, style="filled", fillcolor="#E0F2F7", fontname="Arial", fontsize=10];
+
+    edge [fontname="Arial", fontsize=9];
+
+
+
+    // Clusters para agrupar visualmente (SaaStechBrazil e TOTVS)
+
+    subgraph cluster_0 {
+
+        label = "SaaStechBrazil (Fontes de Dados)";
+
+        style = "filled";
+
+        color = "#B2EBF2";
+
+        node [fillcolor="#81D4FA"]; // Cor para os nós dentro deste cluster
+
+
+
+        // Fontes de Dados da SaaStechBrazil
+
+        SaaSTech_DB [label="Bancos de Dados\n(MySQL, PostgreSQL)"];
+
+        SaaSTech_API [label="APIs Internas\n/ Microsserviços"];
+
+        SaaSTech_CSV [label="Arquivos CSV\n(clientes, tickets, uso)"];
+
+    }
+
+
+
+    subgraph cluster_1 {
+
+        label = "Ambiente TOTVS";
+
+        style = "filled";
+
+        color = "#C8E6C9";
+
+        node [fillcolor="#A5D6A7"]; // Cor para os nós dentro deste cluster
+
+
+
+        // Consumo/Acesso no TOTVS
+
+        TOTVS_BI [label="TOTVS BI\n(Dashboards, Relatórios)"];
+
+        TOTVS_Notebooks [label="Notebooks\n(Jupyter, Databricks)\n- Modelagem Churn"];
+
+        TOTVS_APIs [label="APIs Internas TOTVS\n(Integrações)"];
+
+        TOTVS_Sistemas [label="Sistemas TOTVS\n(ERP, CRM, etc.)"];
+
+    }
+
+
+
+
+
+    // 1. Ingestão
+
+    Ingestao [label="1. Ingestão\n(SFTP, Scripts Python,\nApache Airflow/Nifi)", fillcolor="#FFECB3"];
+
+
+
+    // 2. Staging
+
+    Staging [label="2. Staging\n(Data Lake - S3/GCS)\n(Dados Brutos - CSV)", fillcolor="#FFF9C4"];
+
+
+
+    // 3. Processamento
+
+    Processamento [label="3. Processamento\n(Python/Pandas, SQL,\nApache Spark)\n- Limpeza\n- Combinação (Joins)\n- Engenharia de Features\n- Normalização\n- Criação da Variável Alvo", fillcolor="#D1C4E9"];
+
+
+
+    // 4. Acesso/Consumo
+
+    AcessoConsumo [label="4. Acesso/Consumo\n(Data Marts, Data Warehouse)", fillcolor="#B2DFDB"];
+
+
+
+
+
+    // Conexões e Fluxo
+
+    SaaSTech_DB -> Ingestao [label="Dados Transacionais"];
+
+    SaaSTech_API -> Ingestao [label="Dados via API"];
+
+    SaaSTech_CSV -> Ingestao [label="Arquivos CSV"]; // Seu caso específico
+
+
+
+    Ingestao -> Staging [label="Transferência de Dados Brutos\n(Via ETL Batch / CDC)"];
+
+
+
+    Staging -> Processamento [label="Leitura de Dados Brutos"];
+
+
+
+    Processamento -> AcessoConsumo [label="Dados Limpos e Transformados"];
+
+
+
+    AcessoConsumo -> TOTVS_BI [label="Consultas/Relatórios"];
+
+    AcessoConsumo -> TOTVS_Notebooks [label="Análise/Desenvolvimento de Modelos"];
+
+    AcessoConsumo -> TOTVS_APIs [label="Consumo por APIs"];
+
+    AcessoConsumo -> TOTVS_Sistemas [label="Integração de Dados"];
+
+
+
+    // Setas para indicar o ambiente (não fluxos diretos de dados, mas pertencimento)
+
+    Ingestao -> SaaSTech_DB [style=dotted, arrowhead=none, label="Coleta de"];
+
+    Ingestao -> SaaSTech_API [style=dotted, arrowhead=none, label="Coleta de"];
+
+    Ingestao -> SaaSTech_CSV [style=dotted, arrowhead=none, label="Coleta de"];
+
+
+
+
+
+    TOTVS_BI -> AcessoConsumo [style=dotted, arrowhead=none, label="Usa"];
+
+    TOTVS_Notebooks -> AcessoConsumo [style=dotted, arrowhead=none, label="Usa"];
+
+    TOTVS_APIs -> AcessoConsumo [style=dotted, arrowhead=none, label="Usa"];
+
+    TOTVS_Sistemas -> AcessoConsumo [style=dotted, arrowhead=none, label="Usa"];
+
+
+
+    // Título do Diagrama
+
+    label = "\nFluxo Arquitetural de Dados: SaaSTechBrazil para TOTVS\n(Modelo de Churn)";
+
+    labelloc = "t";
+
+    fontsize=16;
+
+}
